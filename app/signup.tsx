@@ -12,25 +12,31 @@ import { useAssets } from "expo-asset";
 import { Link, useRouter } from "expo-router";
 import { defaultStyles } from "@/constants/Styles";
 import Colors from "@/constants/Colors";
+import {useSignUp} from "@clerk/clerk-expo";
 
 const Page = () => {
 	const [countryCode, setCountryCode] = useState("+234");
 	const [phoneNumber, setPhoneNumber] = useState("");
+	const [email, setEmail] = useState("");
 	const keyboardVerticalOffset = Platform.OS === "ios" ? 80 : 0;
 	const router = useRouter();
+	const { signUp } = useSignUp();
 	const onSignup = async () => {
 		const fullPhoneNumber = `${countryCode}${phoneNumber}`;
+		console.log(email)
 
-		// try {
-		//   await signUp!.create({
-		// 	phoneNumber: fullPhoneNumber,
-		//   });
-		//   signUp!.preparePhoneNumberVerification();
+		try {
+		  await signUp!.create({
+			emailAddress: email,
 
-		//   router.push({ pathname: '/verify/[phone]', params: { phone: fullPhoneNumber } });
-		// } catch (error) {
-		//   console.error('Error signing up:', error);
-		// }
+		  });
+			signUp!.prepareEmailAddressVerification({ strategy: "email_code" });
+
+		  router.push({ pathname: '/verify/[email]', params: { email: email } });
+		} catch (error) {
+		  console.error('Error signing up:', error);
+			console.error(JSON.stringify(error, null, 2));
+		}
 	};
 
 	return (
@@ -58,11 +64,11 @@ const Page = () => {
 					/>
 					<TextInput
 						style={[styles.input, { flex: 1 }]}
-						placeholder="Mobile number"
+						placeholder="email"
 						placeholderTextColor={Colors.gray}
-						keyboardType="numeric"
-						value={phoneNumber}
-						onChangeText={setPhoneNumber}
+
+						value={email}
+						onChangeText={setEmail}
 					/>
 				</View>
 

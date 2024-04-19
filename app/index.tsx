@@ -20,6 +20,7 @@ const Page = () => {
 					style={styles.video}
 				/>
 			)}
+
 			<View
 				style={{
 					marginTop: 80,
